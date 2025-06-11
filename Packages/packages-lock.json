@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.pabgames.smartvars": {
+      "version": "file:C:/Users/My PC/Desktop/com.pabgames.smartvars",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
     "com.unity.collab-proxy": {
       "version": "2.8.2",
       "depth": 0,

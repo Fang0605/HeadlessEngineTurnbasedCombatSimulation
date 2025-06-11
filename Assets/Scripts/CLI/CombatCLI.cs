@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CombatCLI : MonoBehaviour
@@ -8,24 +6,39 @@ public class CombatCLI : MonoBehaviour
     static void MainCLI()
     {
         var args = System.Environment.GetCommandLineArgs();
-        string fighter1Arg = null;
-        string fighter2Arg = null;
+        string fighter1Name = null;
+        string fighter2Name = null;
 
         for (int i = 0; i < args.Length; i++)
         {
-            if (args[i] == "-fighter1" && i + 1 < args.Length) fighter1Arg = args[i + 1];
-            if (args[i] == "-fighter2" && i + 1 < args.Length) fighter2Arg = args[i + 1];
+            if (args[i] == "-fighter1" && i + 1 < args.Length) fighter1Name = args[i + 1];
+            if (args[i] == "-fighter2" && i + 1 < args.Length) fighter2Name = args[i + 1];
         }
 
-        if (fighter1Arg == null || fighter2Arg == null)
+        if (string.IsNullOrEmpty(fighter1Name) || string.IsNullOrEmpty(fighter2Name))
         {
-            Debug.LogError("Usage: -fighter1 Name:HP:DMG -fighter2 Name:HP:DMG");
+            Debug.LogError("Usage: -fighter1 Name -fighter2 Name");
             Application.Quit();
             return;
         }
 
-        Fighter f1 = ParseFighter(fighter1Arg);
-        Fighter f2 = ParseFighter(fighter2Arg);
+        // Load assets from Resources
+        FighterData fighter1Data = Resources.Load<FighterData>($"Fighters/{fighter1Name}");
+        FighterData fighter2Data = Resources.Load<FighterData>($"Fighters/{fighter2Name}");
+
+        Debug.Log($"Fighter 1 Name: {fighter1Name}");
+        Debug.Log($"Fighter 2 Name: {fighter2Name}");
+
+        if (fighter1Data == null || fighter2Data == null)
+        {
+            Debug.LogError($"Could not load FighterData for: {fighter1Name} or {fighter2Name}");
+            Application.Quit();
+            return;
+        }
+
+        // Create Fighter from data
+        Fighter f1 = new Fighter(fighter1Data);
+        Fighter f2 = new Fighter(fighter2Data);
 
         CombatLog.Init("cli_combat");
         TurnBasedEngine.RunCombatAndLog(f1, f2);
@@ -33,14 +46,5 @@ public class CombatCLI : MonoBehaviour
 
         Debug.Log("Combat log written to: " + CombatLog.GetLogPath());
         Application.Quit();
-    }
-
-    static Fighter ParseFighter(string arg)
-    {
-        var parts = arg.Split(':');
-        string name = parts[0];
-        int hp = int.Parse(parts[1]);
-        int dmg = int.Parse(parts[2]);
-        return new Fighter(name, hp, dmg);
     }
 }

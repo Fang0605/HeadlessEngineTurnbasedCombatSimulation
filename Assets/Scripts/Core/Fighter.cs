@@ -7,11 +7,18 @@ public class Fighter
     public int ATK;
     public bool IsDead => HP <= 0;
 
-    public Fighter(string name, int hp, int atk)
+    public Fighter(FighterData data)
+    {
+        Name = data.FighterName.Value;
+        HP = data.MaxHP.Value;
+        ATK = data.ATK.Value;
+    }
+
+    public Fighter(string name, int hP, int aTK)
     {
         Name = name;
-        HP = hp;
-        ATK = atk;
+        HP = hP;
+        ATK = aTK;
     }
 
     public string Attack(Fighter target)
