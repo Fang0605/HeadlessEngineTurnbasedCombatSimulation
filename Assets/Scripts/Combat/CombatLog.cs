@@ -37,6 +37,11 @@ public class CombatLog
     public static void End()
     {
         Write("=== Combat Log Ended ===");
+
+        // Auto-open the log (only on Windows)
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+        System.Diagnostics.Process.Start("explorer.exe", logFilePath.Replace("/", "\\"));
+#endif
     }
 
     public static string GetLogPath()
