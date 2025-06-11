@@ -8,11 +8,32 @@ public class TurnBasedEngine : MonoBehaviour
     private int currentTurnIndex = 0;
     private int turnIndex = 0;
 
+    public static void RunCombatAndLog(Fighter f1, Fighter f2)
+    {
+        var entity1 = new CombatEntity(f1.Name, f1.HP, f1.ATK);
+        var entity2 = new CombatEntity(f2.Name, f2.HP, f2.ATK);
+
+        int turn = 0;
+        while (entity1.IsAlive && entity2.IsAlive)
+        {
+            if (turn % 2 == 0)
+            {
+                entity1.Attack(entity2, turn);
+            }
+            else
+            {
+                entity2.Attack(entity1, turn);
+            }
+            turn++;
+        }
+
+        CombatLog.Write("Battle Over!");
+    }
+
     void Start()
     {
         Debug.Log("Turn-Based Engine Started.");
 
-        // Create example combatants
         entities.Add(new CombatEntity("Werewolf", 100, 15));
         entities.Add(new CombatEntity("Hunter", 80, 20));
 
@@ -24,7 +45,7 @@ public class TurnBasedEngine : MonoBehaviour
     {
         while (!IsBattleOver())
         {
-            yield return new WaitForSeconds(1f); // simulate tick
+            yield return new WaitForSeconds(1f);
 
             var attacker = entities[currentTurnIndex];
             var target = entities[(currentTurnIndex + 1) % entities.Count];
@@ -38,7 +59,7 @@ public class TurnBasedEngine : MonoBehaviour
         }
 
         Debug.Log("Battle Over!");
-        Application.Quit(0); // end headless process
+        Application.Quit(0);
     }
 
     private bool IsBattleOver()
